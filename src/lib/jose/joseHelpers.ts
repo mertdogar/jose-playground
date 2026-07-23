@@ -109,22 +109,30 @@ export async function verifyJwtToken(
   rawKey: string,
   verifyOpts: JwtVerifyOptions
 ) {
-  const protectedHeader = jose.decodeProtectedHeader(token);
-  const alg = (protectedHeader.alg as string) || 'HS256';
-  
-  const key = await resolveJoseKey(keyObj, rawKey, alg, 'public');
+  try {
+    const protectedHeader = jose.decodeProtectedHeader(token);
+    const alg = (protectedHeader.alg as string) || 'HS256';
+    
+    const key = await resolveJoseKey(keyObj, rawKey, alg, 'public');
 
-  const options: jose.JWTVerifyOptions = {
-    clockTolerance: verifyOpts.clockTolerance || 0,
-  };
-  if (verifyOpts.issuer) options.issuer = verifyOpts.issuer;
-  if (verifyOpts.audience) options.audience = verifyOpts.audience;
+    const options: jose.JWTVerifyOptions = {
+      clockTolerance: verifyOpts.clockTolerance || 0,
+    };
+    if (verifyOpts.issuer) options.issuer = verifyOpts.issuer;
+    if (verifyOpts.audience) options.audience = verifyOpts.audience;
 
-  const result = await jose.jwtVerify(token, key, options);
-  return {
-    payload: result.payload,
-    protectedHeader: result.protectedHeader,
-  };
+    const result = await jose.jwtVerify(token, key, options);
+    return {
+      valid: true,
+      payload: result.payload,
+      protectedHeader: result.protectedHeader,
+    };
+  } catch (err: any) {
+    return {
+      valid: false,
+      error: err.message || 'JWT verification failed',
+    };
+  }
 }
 
 export function decodeJwtSafely(token: string) {
