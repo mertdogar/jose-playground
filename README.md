@@ -3,6 +3,7 @@
 An interactive, browser-based playground for **JavaScript Object Signing and Encryption (JOSE)** standards (**JWT**, **JWE**, **JWS**, **JWK**, and **JWKS**) powered by panva's [`jose`](https://github.com/panva/jose) v6 library, CodeMirror, Prettier, and TanStack Start.
 
 🔗 **Repository**: [github.com/mertdogar/jose-playground](https://github.com/mertdogar/jose-playground)
+🌐 **Live Demo**: [mertdogar.github.io/jose-playground](https://mertdogar.github.io/jose-playground)
 
 ---
 
