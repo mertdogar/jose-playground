@@ -213,10 +213,10 @@ export const KeyManagerModal: React.FC<KeyManagerModalProps> = ({
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-sm text-zinc-900 dark:text-zinc-200">{k.name}</span>
-                        <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded-full bg-violet-950/80 text-violet-300 border border-violet-800/50">
+                        <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded-full bg-violet-100 dark:bg-violet-950/80 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800/50">
                           {k.alg}
                         </span>
-                        <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded-full bg-zinc-800 text-zinc-300">
+                        <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded-full bg-zinc-200/80 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
                           {k.type}
                         </span>
                       </div>

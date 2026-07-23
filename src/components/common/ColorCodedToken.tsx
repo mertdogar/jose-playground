@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, Check, Info } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 
 interface ColorCodedTokenProps {
   token: string;
@@ -40,16 +40,16 @@ export const ColorCodedToken: React.FC<ColorCodedTokenProps> = ({
       switch (index) {
         case 0:
           return isHovered
-            ? 'bg-pink-500/30 text-pink-700 dark:text-pink-200 ring-1 ring-pink-400'
-            : 'text-pink-600 dark:text-pink-400 hover:bg-pink-500/20';
+            ? 'bg-pink-500/20 dark:bg-pink-500/30 text-pink-800 dark:text-pink-200 ring-1 ring-pink-400 font-bold'
+            : 'text-pink-600 dark:text-pink-400 hover:bg-pink-500/10 dark:hover:bg-pink-500/20';
         case 1:
           return isHovered
-            ? 'bg-purple-500/30 text-purple-700 dark:text-purple-200 ring-1 ring-purple-400'
-            : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/20';
+            ? 'bg-purple-500/20 dark:bg-purple-500/30 text-purple-800 dark:text-purple-200 ring-1 ring-purple-400 font-bold'
+            : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 dark:hover:bg-purple-500/20';
         case 2:
           return isHovered
-            ? 'bg-cyan-500/30 text-cyan-700 dark:text-cyan-200 ring-1 ring-cyan-400'
-            : 'text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/20';
+            ? 'bg-cyan-500/20 dark:bg-cyan-500/30 text-cyan-800 dark:text-cyan-200 ring-1 ring-cyan-400 font-bold'
+            : 'text-cyan-700 dark:text-cyan-400 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/20';
         default:
           return 'text-zinc-700 dark:text-zinc-300';
       }
@@ -57,15 +57,25 @@ export const ColorCodedToken: React.FC<ColorCodedTokenProps> = ({
       // JWE - 5 Parts: 0=Header (Pink), 1=EncKey (Emerald), 2=IV (Amber), 3=Ciphertext (Purple), 4=Tag (Rose)
       switch (index) {
         case 0:
-          return isHovered ? 'bg-pink-500/30 text-pink-700 dark:text-pink-200 ring-1 ring-pink-400' : 'text-pink-600 dark:text-pink-400 hover:bg-pink-500/20';
+          return isHovered
+            ? 'bg-pink-500/20 dark:bg-pink-500/30 text-pink-800 dark:text-pink-200 ring-1 ring-pink-400 font-bold'
+            : 'text-pink-600 dark:text-pink-400 hover:bg-pink-500/10 dark:hover:bg-pink-500/20';
         case 1:
-          return isHovered ? 'bg-emerald-500/30 text-emerald-700 dark:text-emerald-200 ring-1 ring-emerald-400' : 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20';
+          return isHovered
+            ? 'bg-emerald-500/20 dark:bg-emerald-500/30 text-emerald-800 dark:text-emerald-200 ring-1 ring-emerald-400 font-bold'
+            : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 dark:hover:bg-emerald-500/20';
         case 2:
-          return isHovered ? 'bg-amber-500/30 text-amber-700 dark:text-amber-200 ring-1 ring-amber-400' : 'text-amber-600 dark:text-amber-400 hover:bg-amber-500/20';
+          return isHovered
+            ? 'bg-amber-500/20 dark:bg-amber-500/30 text-amber-900 dark:text-amber-200 ring-1 ring-amber-400 font-bold'
+            : 'text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 dark:hover:bg-amber-500/20';
         case 3:
-          return isHovered ? 'bg-purple-500/30 text-purple-700 dark:text-purple-200 ring-1 ring-purple-400' : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/20';
+          return isHovered
+            ? 'bg-purple-500/20 dark:bg-purple-500/30 text-purple-800 dark:text-purple-200 ring-1 ring-purple-400 font-bold'
+            : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 dark:hover:bg-purple-500/20';
         case 4:
-          return isHovered ? 'bg-rose-500/30 text-rose-700 dark:text-rose-200 ring-1 ring-rose-400' : 'text-rose-600 dark:text-rose-400 hover:bg-rose-500/20';
+          return isHovered
+            ? 'bg-rose-500/20 dark:bg-rose-500/30 text-rose-800 dark:text-rose-200 ring-1 ring-rose-400 font-bold'
+            : 'text-rose-700 dark:text-rose-400 hover:bg-rose-500/10 dark:hover:bg-rose-500/20';
         default:
           return 'text-zinc-700 dark:text-zinc-300';
       }
@@ -108,7 +118,7 @@ export const ColorCodedToken: React.FC<ColorCodedTokenProps> = ({
             >
               {part}
             </span>
-            {i < parts.length - 1 && <span className="text-zinc-600 font-bold px-0.5">.</span>}
+            {i < parts.length - 1 && <span className="text-zinc-600 dark:text-zinc-400 font-bold px-0.5">.</span>}
           </React.Fragment>
         ))}
       </div>
@@ -120,13 +130,23 @@ export const ColorCodedToken: React.FC<ColorCodedTokenProps> = ({
             key={i}
             onMouseEnter={() => onHoverPart && onHoverPart(i)}
             onMouseLeave={() => onHoverPart && onHoverPart(null)}
-            className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full cursor-pointer transition-all border ${
-              hoveredPart === i ? 'border-zinc-500 bg-zinc-800/80 scale-105' : 'border-zinc-800 bg-zinc-900/40 text-zinc-400'
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full cursor-pointer transition-all border ${
+              hoveredPart === i
+                ? 'border-violet-500 bg-violet-100 dark:bg-violet-950/80 text-violet-900 dark:text-violet-200 scale-105 shadow-sm font-semibold'
+                : 'border-zinc-200 dark:border-zinc-800 bg-zinc-100/90 dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200/80 dark:hover:bg-zinc-800/80'
             }`}
           >
             <span
               className={`w-2 h-2 rounded-full ${
-                i === 0 ? 'bg-pink-400' : i === 1 ? (type === 'JWE' ? 'bg-emerald-400' : 'bg-purple-400') : i === 2 ? (type === 'JWE' ? 'bg-amber-400' : 'bg-cyan-400') : i === 3 ? 'bg-purple-400' : 'bg-rose-400'
+                i === 0
+                  ? 'bg-pink-500'
+                  : i === 1
+                  ? (type === 'JWE' ? 'bg-emerald-500' : 'bg-purple-500')
+                  : i === 2
+                  ? (type === 'JWE' ? 'bg-amber-500' : 'bg-cyan-500')
+                  : i === 3
+                  ? 'bg-purple-500'
+                  : 'bg-rose-500'
               }`}
             />
             <span>{getPartLabel(i)}</span>
