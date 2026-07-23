@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/layout/Navbar';
+import { Footer } from '../components/layout/Footer';
 import { JwtWorkbench } from '../components/jwt/JwtWorkbench';
 import { JweWorkbench } from '../components/jwe/JweWorkbench';
 import { JwsWorkbench } from '../components/jws/JwsWorkbench';
@@ -113,18 +114,7 @@ function JosePlaygroundApp() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-200 dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-950/80 py-6 text-center text-xs text-zinc-600 dark:text-zinc-500 transition-colors">
-        <div className="max-w-[1800px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-violet-600 dark:text-violet-400" />
-            <span>JOSE Playground • Powered by <code className="text-zinc-800 dark:text-zinc-300 font-mono">jose</code> by panva</span>
-          </div>
-
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-600">
-            Client-side WebCrypto execution. All keys and tokens remain local in your browser.
-          </p>
-        </div>
-      </footer>
+      <Footer activeTab={activeTab} onSelectTab={setActiveTab} />
 
       {/* Global Key Manager Modal */}
       <KeyManagerModal
