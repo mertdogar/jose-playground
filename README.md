@@ -6,6 +6,28 @@ An interactive, browser-based playground for **JavaScript Object Signing and Enc
 
 ---
 
+## 📸 Screenshots
+
+### 🛡️ JWT Signer & Visual Inspector
+![JWT Workbench](public/screenshots/jwt-workbench.png)
+
+### 🔒 JWE Encryption & 5-Part Segment Tamper Tool
+![JWE Workbench](public/screenshots/jwe-workbench.png)
+
+### 💻 CodeMirror TypeScript Sandbox & Live Console Output
+![Code Sandbox](public/screenshots/sandbox-editor.png)
+
+### ✍️ JWS Signature Workbench
+![JWS Workbench](public/screenshots/jws-workbench.png)
+
+### 🔑 JWK & JWKS Endpoint Generator
+![JWK & JWKS Workbench](public/screenshots/jwk-workbench.png)
+
+### 🌗 Light Theme View
+![Light Theme](public/screenshots/light-theme.png)
+
+---
+
 ## ✨ Features
 
 ### 🔑 1. Global Key Manager
