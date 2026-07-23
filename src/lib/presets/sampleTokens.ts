@@ -103,3 +103,84 @@ export const SAMPLE_PRESETS: SamplePreset[] = [
     }, null, 2),
   },
 ];
+
+export interface ExternalSampleToken {
+  id: string;
+  name: string;
+  description: string;
+  token: string;
+  secretOrKeyHint?: string;
+}
+
+export const EXTERNAL_SAMPLE_TOKENS: ExternalSampleToken[] = [
+  {
+    id: 'hs256-jwt',
+    name: 'Standard HS256 JWT Token',
+    description: 'Signed HMAC-SHA256 JWT token with secret: "super-secret-key-for-jose-playground-32bytes!"',
+    secretOrKeyHint: 'super-secret-key-for-jose-playground-32bytes!',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzEyMyIsIm5hbWUiOiJKb2huIERvZSIsImFkbWluIjp0cnVlLCJpYXQiOjE3ODQ4MzM4MDksImV4cCI6MTc4NDg0MTAwOX0.J9J4K-dfNop1TFLRLW9YyyqQhyMrkm8zByiY2twUfmM',
+  },
+  {
+    id: 'hs256-expired-jwt',
+    name: 'Expired HS256 JWT Token',
+    description: 'JWT token with exp timestamp set in the past for testing expiration claim validation.',
+    secretOrKeyHint: 'super-secret-key-for-jose-playground-32bytes!',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzEyMyIsIm5hbWUiOiJKb2huIERvZSIsImFkbWluIjp0cnVlLCJpYXQiOjE3ODQ4MjM4MDksImV4cCI6MTc4NDgyODgwOX0.90JgkVCa3y7tP8Wjng45LWFqAOSBq-fhh2eSXFc4p7s',
+  },
+  {
+    id: 'flattened-jws-json',
+    name: 'Flattened JWS JSON Signature',
+    description: 'JSON formatted JWS with detached/separated payload and signature fields.',
+    secretOrKeyHint: 'super-secret-key-for-jose-playground-32bytes!',
+    token: JSON.stringify(
+      {
+        payload: 'eyJpc3MiOiJqb2UiLCJleHAiOjEzMDA4MTkzODB9',
+        protected: 'eyJhbGciOiJIUzI1NiJ9',
+        signature: 'CA4Z3YR4SO2wmewNCZVn5Z_nAO2tImqF9KqA-l_lsUU',
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: 'direct-jwe-token',
+    name: 'Direct Encrypted JWE (dir + A256GCM)',
+    description: 'Encrypted JWE using direct key algorithm (dir) and AES-256-GCM content encryption.',
+    secretOrKeyHint: 'dev-only-insecure-shared-secret',
+    token:
+      'eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..hDjMZFVGrOV5aEH3.douisnBVmJ0R5vy1TJ2KVDyVfHQT6jXNYjcq7lkbkbfsuxTefkCseVl2QkmOX-vPpCg6CxlCJnTub3Sou23Z5ut2UspibrynfJH9jschdhHv1U0qB6Ue63MoLxXM8rt2Ho-Gvdoa1j2i4Bz0Jt0xjMx5SQ4PnF1DVNtNI7aMOLGl4AXzSY3GAoKcFrNtyl-Gr9I9CeoH5OHvEm29L91QUITh2Yk9pyLf3IFou1fClll7uFe0N1P8hgVhsXruJXJtJAG1QLOWNfA.UA8QgdpQa4ARn2jGe3sr-w',
+  },
+  {
+    id: 'example-jwk-set',
+    name: 'JWK Set (JWKS) JSON',
+    description: 'Public Key Set containing RSA and EC keys.',
+    token: JSON.stringify(
+      {
+        keys: [
+          {
+            kty: 'RSA',
+            use: 'sig',
+            alg: 'RS256',
+            kid: 'key-2026-auth-01',
+            n: 'u1W1gFWFOEjXk...',
+            e: 'AQAB',
+          },
+          {
+            kty: 'EC',
+            crv: 'P-256',
+            use: 'sig',
+            alg: 'ES256',
+            kid: 'ec-key-es256-v1',
+            x: 'f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvMVEg',
+            y: 'x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0',
+          },
+        ],
+      },
+      null,
+      2
+    ),
+  },
+];
+

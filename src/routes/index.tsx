@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
+import { DecoderWorkbench } from '../components/decoder/DecoderWorkbench';
 import { JwtWorkbench } from '../components/jwt/JwtWorkbench';
 import { JweWorkbench } from '../components/jwe/JweWorkbench';
 import { JwsWorkbench } from '../components/jws/JwsWorkbench';
@@ -15,7 +16,7 @@ import { Key, Shield, Sparkles, Code2, BookOpen } from 'lucide-react';
 export const Route = createFileRoute('/')({ component: JosePlaygroundApp });
 
 function JosePlaygroundApp() {
-  const [activeTab, setActiveTab] = useState<'jwt' | 'jwe' | 'jws' | 'jwk' | 'sandbox'>('jwt');
+  const [activeTab, setActiveTab] = useState<'decoder' | 'jwt' | 'jwe' | 'jws' | 'jwk' | 'sandbox'>('decoder');
   const [keys, setKeys] = useState<StoredKey[]>([]);
   const [isKeyManagerOpen, setIsKeyManagerOpen] = useState(false);
   const [sandboxCode, setSandboxCode] = useState<string>('');
@@ -64,6 +65,13 @@ function JosePlaygroundApp() {
     setActiveTab('sandbox');
   };
 
+  const handleTransferToWorkbench = (
+    tab: 'jwt' | 'jwe' | 'jws',
+    _data: any
+  ) => {
+    setActiveTab(tab);
+  };
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col font-sans antialiased selection:bg-violet-500/30 selection:text-violet-200 transition-colors">
       {/* Top Navbar */}
@@ -78,6 +86,15 @@ function JosePlaygroundApp() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-[1800px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        {activeTab === 'decoder' && (
+          <DecoderWorkbench
+            keys={keys}
+            onOpenKeyManager={() => setIsKeyManagerOpen(true)}
+            onOpenInSandbox={handleOpenInSandbox}
+            onTransferToWorkbench={handleTransferToWorkbench}
+          />
+        )}
+
         {activeTab === 'jwt' && (
           <JwtWorkbench
             keys={keys}

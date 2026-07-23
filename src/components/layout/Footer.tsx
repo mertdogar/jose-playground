@@ -14,12 +14,12 @@ import {
 } from 'lucide-react';
 
 interface FooterProps {
-  activeTab?: 'jwt' | 'jwe' | 'jws' | 'jwk' | 'sandbox';
-  onSelectTab: (tab: 'jwt' | 'jwe' | 'jws' | 'jwk' | 'sandbox') => void;
+  activeTab?: 'jwt' | 'jwe' | 'jws' | 'jwk' | 'decoder' | 'sandbox';
+  onSelectTab: (tab: 'jwt' | 'jwe' | 'jws' | 'jwk' | 'decoder' | 'sandbox') => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({ activeTab, onSelectTab }) => {
-  const handleTabClick = (tab: 'jwt' | 'jwe' | 'jws' | 'jwk' | 'sandbox') => {
+  const handleTabClick = (tab: 'jwt' | 'jwe' | 'jws' | 'jwk' | 'decoder' | 'sandbox') => {
     onSelectTab(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -91,6 +91,19 @@ export const Footer: React.FC<FooterProps> = ({ activeTab, onSelectTab }) => {
             <ul className="space-y-2 text-[12px]">
               <li>
                 <button
+                  onClick={() => handleTabClick('decoder')}
+                  className={`inline-flex items-center gap-2 text-left cursor-pointer transition-colors ${
+                    activeTab === 'decoder'
+                      ? 'text-violet-600 dark:text-violet-400 font-semibold'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
+                  }`}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
+                  <span>Universal JOSE Decoder</span>
+                </button>
+              </li>
+              <li>
+                <button
                   onClick={() => handleTabClick('jwt')}
                   className={`inline-flex items-center gap-2 text-left cursor-pointer transition-colors ${
                     activeTab === 'jwt'
@@ -99,7 +112,7 @@ export const Footer: React.FC<FooterProps> = ({ activeTab, onSelectTab }) => {
                   }`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
-                  <span>JWT Debugger & Decoder</span>
+                  <span>JWT Debugger & Workbench</span>
                 </button>
               </li>
               <li>

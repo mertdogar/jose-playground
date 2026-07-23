@@ -1,10 +1,10 @@
 import React from 'react';
-import { Key, Shield, Terminal, BookOpen, Sun, Moon } from 'lucide-react';
+import { Key, Shield, Terminal, BookOpen, Sun, Moon, Sparkles } from 'lucide-react';
 import type { StoredKey } from '../../lib/keys/keyStore';
 
 interface NavbarProps {
-  activeTab: 'jwt' | 'jwe' | 'jws' | 'jwk' | 'sandbox';
-  setActiveTab: (tab: 'jwt' | 'jwe' | 'jws' | 'jwk' | 'sandbox') => void;
+  activeTab: 'jwt' | 'jwe' | 'jws' | 'jwk' | 'decoder' | 'sandbox';
+  setActiveTab: (tab: 'jwt' | 'jwe' | 'jws' | 'jwk' | 'decoder' | 'sandbox') => void;
   keys: StoredKey[];
   onOpenKeyManager: () => void;
   theme: 'dark' | 'light';
@@ -44,6 +44,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Navigation Tabs */}
         <nav className="flex items-center gap-1 p-1 bg-zinc-100 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 rounded-xl transition-colors">
+          <button
+            onClick={() => setActiveTab('decoder')}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'decoder'
+                ? 'bg-violet-600 text-white shadow-md'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-200/60 dark:hover:bg-zinc-800/50'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Decoder</span>
+          </button>
+
           <button
             onClick={() => setActiveTab('jwt')}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${

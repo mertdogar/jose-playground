@@ -186,6 +186,27 @@ export async function encryptJwe(
   }
 }
 
+export async function deriveHkdfCek(
+  secret: string,
+  enc: string,
+  infoStr: string = 'super-line/jwe'
+): Promise<Uint8Array> {
+  const targetBytes = enc.includes('256') ? 32 : enc.includes('192') ? 24 : 16;
+  const ikm = new TextEncoder().encode(secret);
+  const hkdfKey = await crypto.subtle.importKey('raw', ikm, 'HKDF', false, ['deriveBits']);
+  const derivedBits = await crypto.subtle.deriveBits(
+    {
+      name: 'HKDF',
+      hash: 'SHA-256',
+      salt: new Uint8Array(0),
+      info: new TextEncoder().encode(infoStr),
+    },
+    hkdfKey,
+    targetBytes * 8
+  );
+  return new Uint8Array(derivedBits);
+}
+
 export async function decryptJwe(
   jweInput: string | object,
   keyObj: StoredKey | undefined,
@@ -203,19 +224,52 @@ export async function decryptJwe(
   }
 
   const alg = header?.alg || 'RSA-OAEP-256';
+  const enc = header?.enc || 'A256GCM';
   const key = await resolveJoseKey(keyObj, rawKey, alg, 'private');
 
-  let decryptResult: { plaintext: Uint8Array; protectedHeader: any };
-  if (typeof jweInput === 'string') {
-    decryptResult = await jose.compactDecrypt(jweInput, key);
-  } else {
-    decryptResult = await jose.generalDecrypt(jweInput as any, key);
-  }
+  try {
+    let decryptResult: { plaintext: Uint8Array; protectedHeader: any };
+    if (typeof jweInput === 'string') {
+      decryptResult = await jose.compactDecrypt(jweInput, key);
+    } else {
+      const jsonObj = jweInput as any;
+      if (jsonObj.ciphertext && !jsonObj.recipients) {
+        decryptResult = await jose.flattenedDecrypt(jsonObj, key);
+      } else {
+        decryptResult = await jose.generalDecrypt(jsonObj, key);
+      }
+    }
 
-  return {
-    plaintext: new TextDecoder().decode(decryptResult.plaintext),
-    protectedHeader: decryptResult.protectedHeader,
-  };
+    return {
+      plaintext: new TextDecoder().decode(decryptResult.plaintext),
+      protectedHeader: decryptResult.protectedHeader,
+    };
+  } catch (firstErr: any) {
+    // Fallback: If alg === 'dir' and rawKey string is present, try HKDF key derivation
+    const inputSecret = keyObj?.secretText || rawKey;
+    if (alg === 'dir' && inputSecret) {
+      const hkdfInfos = ['super-line/jwe', '', 'JWE', 'encryption', 'jwt'];
+      for (const infoStr of hkdfInfos) {
+        try {
+          const derivedKey = await deriveHkdfCek(inputSecret, enc, infoStr);
+          const jsonObj = jweInput as any;
+          const decryptResult = typeof jweInput === 'string'
+            ? await jose.compactDecrypt(jweInput, derivedKey)
+            : jsonObj.recipients
+            ? await jose.generalDecrypt(jsonObj, derivedKey)
+            : await jose.flattenedDecrypt(jsonObj, derivedKey);
+
+          return {
+            plaintext: new TextDecoder().decode(decryptResult.plaintext),
+            protectedHeader: decryptResult.protectedHeader,
+          };
+        } catch (_) {
+          // ignore & try next HKDF info
+        }
+      }
+    }
+    throw firstErr;
+  }
 }
 
 // ----------------------------------------------------
@@ -275,11 +329,20 @@ export async function verifyJws(
       protectedHeader: result.protectedHeader,
     };
   } else {
-    const result = await jose.generalVerify(jwsInput as any, key);
-    return {
-      payload: new TextDecoder().decode(result.payload),
-      protectedHeader: result.protectedHeader,
-    };
+    const jsonObj = jwsInput as any;
+    if (jsonObj.signature && !jsonObj.signatures) {
+      const result = await jose.flattenedVerify(jsonObj, key);
+      return {
+        payload: new TextDecoder().decode(result.payload),
+        protectedHeader: result.protectedHeader,
+      };
+    } else {
+      const result = await jose.generalVerify(jsonObj, key);
+      return {
+        payload: new TextDecoder().decode(result.payload),
+        protectedHeader: result.protectedHeader,
+      };
+    }
   }
 }
 
@@ -460,4 +523,75 @@ const { payload: verifiedBytes, protectedHeader } = await jose.generalVerify(jws
 console.log('Verified Payload:', new TextDecoder().decode(verifiedBytes));`}
 `;
 }
+
+export function generateDecoderCodeSnippet(
+  tokenStr: string,
+  type: string,
+  alg: string,
+  keyObj: StoredKey | undefined,
+  rawKey: string
+): string {
+  const isJwe = type.includes('jwe');
+  let keyInitCode = '';
+
+  if (keyObj) {
+    if (keyObj.type === 'symmetric') {
+      if (keyObj.secretText) {
+        keyInitCode = `const key = new TextEncoder().encode(${JSON.stringify(keyObj.secretText)});`;
+      } else if (keyObj.jwkPrivate) {
+        keyInitCode = `const key = await jose.importJWK(${JSON.stringify(keyObj.jwkPrivate, null, 2)}, '${alg}');`;
+      }
+    } else {
+      const mode = isJwe ? 'private' : 'public';
+      const targetJwk = mode === 'private' ? keyObj.jwkPrivate : keyObj.jwkPublic || keyObj.jwkPrivate;
+      if (targetJwk) {
+        keyInitCode = `const key = await jose.importJWK(${JSON.stringify(targetJwk, null, 2)}, '${alg}');`;
+      } else {
+        keyInitCode = `const key = await jose.importSPKI(${JSON.stringify(keyObj.pemPublic || rawKey)}, '${alg}');`;
+      }
+    }
+  } else {
+    keyInitCode = `const key = new TextEncoder().encode(${JSON.stringify(rawKey || 'your-secret-key')});`;
+  }
+
+  if (isJwe) {
+    return `import * as jose from 'jose';
+
+// 1. Decrypt JWE Token
+const token = ${JSON.stringify(tokenStr)};
+
+${keyInitCode}
+
+try {
+  const { plaintext, protectedHeader } = await jose.compactDecrypt(token, key);
+  console.log('Decrypted Protected Header:', protectedHeader);
+  console.log('Decrypted Payload:', new TextDecoder().decode(plaintext));
+} catch (err) {
+  console.error('Decryption failed:', err);
+}
+`;
+  }
+
+  return `import * as jose from 'jose';
+
+// 1. Inspect & Verify Token
+const token = ${JSON.stringify(tokenStr)};
+
+// Unverified Decode
+const protectedHeader = jose.decodeProtectedHeader(token);
+console.log('Protected Header:', protectedHeader);
+
+${keyInitCode}
+
+try {
+  const { payload, protectedHeader: verifiedHeader } = await jose.jwtVerify(token, key);
+  console.log('✅ Signature & Claims Verified Successfully!');
+  console.log('Verified Header:', verifiedHeader);
+  console.log('Verified Payload:', payload);
+} catch (err) {
+  console.error('❌ Verification failed:', err);
+}
+`;
+}
+
 
