@@ -15,7 +15,8 @@ export const JweWorkbench: React.FC<JweWorkbenchProps> = ({
   onOpenKeyManager,
   onOpenInSandbox,
 }) => {
-  const [selectedKeyId, setSelectedKeyId] = useState<string>(keys[0]?.id || '');
+  const defaultEncKey = keys.find((k) => k.use === 'enc') || keys.find((k) => k.alg.startsWith('RSA-OAEP')) || keys[0];
+  const [selectedKeyId, setSelectedKeyId] = useState<string>(defaultEncKey?.id || '');
   const [rawSecret, setRawSecret] = useState<string>('super-secret-key-for-jose-playground-32bytes!');
 
   const [alg, setAlg] = useState('RSA-OAEP-256');
@@ -67,6 +68,14 @@ export const JweWorkbench: React.FC<JweWorkbenchProps> = ({
       }
     }
   }, [selectedKeyId, currentKey]);
+
+  // Sync default key if keys array updates
+  useEffect(() => {
+    if (keys.length > 0 && (!selectedKeyId || !keys.some(k => k.id === selectedKeyId))) {
+      const preferredKey = keys.find((k) => k.use === 'enc') || keys.find((k) => k.alg.startsWith('RSA-OAEP')) || keys[0];
+      if (preferredKey) setSelectedKeyId(preferredKey.id);
+    }
+  }, [keys]);
 
   const handleEncrypt = async () => {
     setEncryptError('');
